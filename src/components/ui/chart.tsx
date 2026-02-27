@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import * as RechartsPrimitive from "recharts"
-import { cn } from "@/lib/utils"
+import { cn } from "../../lib/utils"
 
 export type ChartConfig = Record<string, { label?: React.ReactNode; color?: string }>
 
