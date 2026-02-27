@@ -47,42 +47,8 @@ const Analytics: React.FC = () => {
     })).sort((a, b) => b.amount - a.amount);
   }, [displayData]);
 
-  const totalSpend = displayData.reduce((sum, e) => sum + Number(e.amount), 0);
+  // const totalSpend = displayData.reduce((sum, e) => sum + Number(e.amount), 0);
   const highestCat = breakdown.length > 0 ? breakdown[0] : { name: 'N/A', amount: 0 };
-
-
-
-
-  // Total Expenses Calculation
-  const totalAmount = useMemo(() => {
-    return expenses.reduce((acc, curr) => acc + curr.amount, 0);
-  }, [expenses]);
-
-
-
-
-  // Highest Category logic
-  const highestCategory = useMemo(() => {
-    if (expenses.length === 0) return "N/A";
-    const cats = expenses.reduce((acc, curr) => {
-      acc[curr.category] = (acc[curr.category] || 0) + curr.amount;
-      return acc;
-    }, {} as Record<string, number>);
-    return Object.keys(cats).reduce((a, b) => cats[a] > cats[b] ? a : b);
-  }, [expenses]);
-
-  // Average Daily Spend Calculation
-  const avgDailySpend = useMemo(() => {
-    if (expenses.length === 0) return 0;
-    const days = new Set(expenses.map(e => new Date(e.date).toDateString())).size;
-    return days > 0 ? totalAmount / days : totalAmount;
-  }, [expenses, totalAmount]);
-
-  // Budget Status (example: if you have a fixed budget of $2000)
-  const budget = 2000;
-  const budgetStatus = useMemo(() => {
-    return ((totalAmount / budget) * 100).toFixed(1) + '%';
-  }, [totalAmount]);
 
   return (
     <div className="max-w-7xl mx-auto py-6 px-4 space-y-8 bg-[#fdfcfb] min-h-screen">

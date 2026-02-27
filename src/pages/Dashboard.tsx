@@ -1,5 +1,4 @@
 // src/pages/Dashboard.tsx
-import { DollarSign, TrendingUp, Target, Calendar } from 'lucide-react';
 import { useMemo } from 'react';
 import { useExpenses } from '../hooks/useExpenses';
 import { WeeklyBarChart } from '@/components/WeeklyBarChart';
@@ -13,36 +12,9 @@ export const Dashboard = () => {
         return expenses.reduce((acc, curr) => acc + curr.amount, 0);
     }, [expenses]);
 
-
-
-
-    // Highest Category logic
-    const highestCategory = useMemo(() => {
-        if (expenses.length === 0) return "N/A";
-        const cats = expenses.reduce((acc, curr) => {
-            acc[curr.category] = (acc[curr.category] || 0) + curr.amount;
-            return acc;
-        }, {} as Record<string, number>);
-        return Object.keys(cats).reduce((a, b) => cats[a] > cats[b] ? a : b);
-    }, [expenses]);
-
-    // Average Daily Spend Calculation
-    const avgDailySpend = useMemo(() => {
-        if (expenses.length === 0) return 0;
-        const days = new Set(expenses.map(e => new Date(e.date).toDateString())).size;
-        return days > 0 ? totalAmount / days : totalAmount;
-    }, [expenses, totalAmount]);
-
-    // Budget Status (example: if you have a fixed budget of $2000)
-    const budget = 2000;
-    const budgetStatus = useMemo(() => {
-        return ((totalAmount / budget) * 100).toFixed(1) + '%';
-    }, [totalAmount]);
-
-
     return (
         <div className="p-4 md:p-8 bg-[#f8fafc] min-h-screen">
-            {/* Header  */}
+            {/* Header */}
             <header className="flex justify-between items-center mb-6 md:mb-10">
                 <div>
                     <h1 className="text-xl md:text-2xl font-bold text-slate-800">Dashboard</h1>
@@ -62,13 +34,12 @@ export const Dashboard = () => {
                 {/* Pie Chart Section */}
                 <div className="bg-white p-5 md:p-8 rounded-2xl border border-gray-100 shadow-sm">
                     <h4 className="text-sm font-bold text-slate-800 mb-2">Spending by Category</h4>
+                    {/* Error yahan resolve hoga agar CategoryPieChart sahi tarah typed ho */}
                     <CategoryPieChart total={Math.round(totalAmount)} />
                 </div>
             </div>
 
-
-
-            {/* Recent Expenses List - Scrollable on mobile */}
+            {/* Recent Expenses List */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                 <div className="p-5 md:p-6 border-b border-gray-50 flex justify-between items-center">
                     <h4 className="text-sm font-bold text-slate-800">Recent Expenses</h4>
@@ -78,7 +49,7 @@ export const Dashboard = () => {
                     {expenses.slice(0, 5).map((item, idx) => (
                         <div key={idx} className="flex items-center justify-between p-4 md:p-5 hover:bg-gray-50 transition-all">
                             <div className="flex items-center gap-3 md:gap-4">
-                                <div className={`w-9 h-9 md:w-10 md:h-10 rounded-lg flex items-center justify-center text-lg bg-emerald-50 text-emerald-500`}>
+                                <div className="w-9 h-9 md:w-10 md:h-10 rounded-lg flex items-center justify-center text-lg bg-emerald-50 text-emerald-500">
                                     {item.category.charAt(0)}
                                 </div>
                                 <div>
@@ -89,7 +60,9 @@ export const Dashboard = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="text-[14px] md:text-[15px] font-black text-slate-700">${Number(item.amount).toFixed(2)}</div>
+                            <div className="text-[14px] md:text-[15px] font-black text-slate-700">
+                                ${Number(item.amount).toFixed(2)}
+                            </div>
                         </div>
                     ))}
                     {expenses.length === 0 && (
@@ -100,4 +73,5 @@ export const Dashboard = () => {
         </div>
     );
 };
+
 export default Dashboard;

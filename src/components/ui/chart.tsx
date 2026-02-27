@@ -21,7 +21,7 @@ export const ChartContainer = React.forwardRef<HTMLDivElement, any>(({ config, c
 export const ChartTooltip = RechartsPrimitive.Tooltip
 
 export const ChartTooltipContent = React.forwardRef<any, any>((props, ref) => {
-  const { payload, hideLabel } = props
+  const { payload } = props
   if (!payload?.length) return null
 
   return (
