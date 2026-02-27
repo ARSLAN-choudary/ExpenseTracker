@@ -1,5 +1,5 @@
 import React from 'react';
-import { Save, Bell, Shield, Database, Download, Trash2 } from 'lucide-react';
+import { Download, Trash2 } from 'lucide-react';
 
  const Settings: React.FC = () => {
   return (

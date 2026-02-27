@@ -12,9 +12,9 @@ export const Dashboard = () => {
     }, [expenses]);
 
     // Recent 5 Expenses
-    const recentExpenses = useMemo(() => {
-        return [...expenses].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 5);
-    }, [expenses]);
+    // const recentExpenses = useMemo(() => {
+    //     return [...expenses].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 5);
+    // }, [expenses]);
 
     // Highest Category logic
     const highestCategory = useMemo(() => {

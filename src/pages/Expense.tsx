@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, Filter, Calendar, Trash2 } from 'lucide-react';
+import { Search, Trash2 } from 'lucide-react';
 import { useExpenses } from '../hooks/useExpenses'; // Context hook import karein
 
 const Expense: React.FC = () => {

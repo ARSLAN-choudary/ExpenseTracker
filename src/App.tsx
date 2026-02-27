@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Menu } from 'lucide-react';
 import Sidebar from './components/Sidebar';
@@ -8,6 +7,7 @@ import Expense from './pages/Expense';
 import Analytics from './pages/Analytics';
 import Settings from './pages/Settings';
 import { ExpenseProvider } from './context/ExpenseContext';
+import { useState } from 'react';
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
