@@ -3,8 +3,8 @@ import { TrendingDown, CheckCircle2 } from 'lucide-react';
 import type { Expense } from '../types';
 import { useExpenses } from '../hooks/useExpenses';
 import { useDateFilter } from '../hooks/useDateFilter';
-import { CategoryPieChart } from '@/components/CategoryPieChart';
-import { TrendLineChart } from '@/components/TrendLineChart';
+import { CategoryPieChart } from '../components/CategoryPieChart';
+import { TrendLineChart } from '../components/TrendLineChart';
 
 const Analytics: React.FC = () => {
   const { expenses } = useExpenses();

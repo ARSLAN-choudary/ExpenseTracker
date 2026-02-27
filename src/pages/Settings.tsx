@@ -1,6 +1,6 @@
 import React from 'react';
 import { Download, Trash2 } from 'lucide-react';
-import { useExpenses } from '@/hooks/useExpenses';
+import { useExpenses } from '../hooks/useExpenses';
 
  const Settings: React.FC = () => {
   const { expenses } = useExpenses();
