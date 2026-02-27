@@ -11,7 +11,6 @@ const Analytics: React.FC = () => {
   const { filteredExpenses, selectedMonth, setSelectedMonth } = useDateFilter(expenses as Expense[]);
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
 
-  // Colors mapping for consistent UI
   const categoryColors: Record<string, string> = {
     'Food': 'bg-red-400',
     'Transport': 'bg-cyan-400',
@@ -29,8 +28,12 @@ const Analytics: React.FC = () => {
       : filteredExpenses.filter(e => e.category === selectedCategory);
   }, [filteredExpenses, selectedCategory]);
 
+  // Total calculate karna zaroori hai PieChart ki prop requirement puri karne ke liye
+  const totalAmount = useMemo(() => {
+    return displayData.reduce((sum, e) => sum + Number(e.amount), 0);
+  }, [displayData]);
+
   const breakdown = useMemo(() => {
-    const total = displayData.reduce((sum, e) => sum + Number(e.amount), 0);
     const groups = displayData.reduce((acc, e) => {
       if (!acc[e.category]) acc[e.category] = { amount: 0, count: 0 };
       acc[e.category].amount += Number(e.amount);
@@ -42,12 +45,11 @@ const Analytics: React.FC = () => {
       name: cat,
       amount: groups[cat].amount,
       count: groups[cat].count,
-      percentage: total > 0 ? (groups[cat].amount / total) * 100 : 0,
+      percentage: totalAmount > 0 ? (groups[cat].amount / totalAmount) * 100 : 0,
       color: categoryColors[cat] || 'bg-emerald-400'
     })).sort((a, b) => b.amount - a.amount);
-  }, [displayData]);
+  }, [displayData, totalAmount]);
 
-  // const totalSpend = displayData.reduce((sum, e) => sum + Number(e.amount), 0);
   const highestCat = breakdown.length > 0 ? breakdown[0] : { name: 'N/A', amount: 0 };
 
   return (
@@ -57,7 +59,7 @@ const Analytics: React.FC = () => {
         <p className="text-slate-500 text-[13px] mt-1">Detailed spending analysis and trends</p>
       </header>
 
-      {/* --- FILTERS --- */}
+      {/* Filters */}
       <div className="flex flex-wrap gap-4">
         <select
           value={selectedMonth}
@@ -82,7 +84,7 @@ const Analytics: React.FC = () => {
         </select>
       </div>
 
-      {/* --- OVERVIEW CARDS --- */}
+      {/* Overview Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex justify-between items-center">
           <div>
@@ -116,22 +118,21 @@ const Analytics: React.FC = () => {
         </div>
       </div>
 
-      {/* --- CHARTS SECTION --- */}
+      {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Trend Chart (Image Match) */}
         <div className="bg-white p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm">
           <h4 className="text-sm font-bold text-slate-800 mb-6">6-Month Spending Trend</h4>
           <TrendLineChart />
         </div>
 
-        {/* Category Distribution (Image Match) */}
         <div className="bg-white p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm">
           <h4 className="text-sm font-bold text-slate-800 mb-2">Category Distribution</h4>
-          <CategoryPieChart />
+          {/* total pass kiya taake error na aaye, lekin text hide rahega */}
+          <CategoryPieChart total={Math.round(totalAmount)}  />
         </div>
       </div>
 
-      {/* --- CATEGORY BREAKDOWN LIST  --- */}
+      {/* Category Breakdown List */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
         <div className="p-6 border-b border-gray-50 bg-gray-50/30">
           <h4 className="text-sm font-bold text-slate-800">Category Breakdown</h4>
