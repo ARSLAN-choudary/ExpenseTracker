@@ -2,7 +2,7 @@
 import { useMemo } from "react";
 import { useExpenses } from "../hooks/useExpenses";
 import { WeeklyBarChart } from '../components/WeeklyBarChart.tsx';
-import { CategoryPieChart } from "@/components/CategoryPieChart";
+import { CategoryPieChart } from "../components/CategoryPieChart.tsx";
 
 export const Dashboard = () => {
   const { expenses } = useExpenses();
