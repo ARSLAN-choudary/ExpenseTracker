@@ -19,7 +19,7 @@ const chartData = [
 ]
 
 // 2. Props mein 'total' ko destructure karein
-export function CategoryPieChart({ total }: CategoryPieChartProps) {
+export function CategoryPieChart({  }: CategoryPieChartProps) {
   return (
     <div className="flex flex-col items-center">
       <ChartContainer config={{}} className="mx-auto aspect-square max-h-[350px] w-full">
