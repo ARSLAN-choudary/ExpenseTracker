@@ -1,8 +1,10 @@
 import React, { useMemo, useState } from 'react';
 import { TrendingDown, CheckCircle2 } from 'lucide-react';
-import type{ Expense } from '../types';
+import type { Expense } from '../types';
 import { useExpenses } from '../hooks/useExpenses';
 import { useDateFilter } from '../hooks/useDateFilter';
+import { CategoryPieChart } from '@/components/CategoryPieChart';
+import { TrendLineChart } from '@/components/TrendLineChart';
 
 const Analytics: React.FC = () => {
   const { expenses } = useExpenses();
@@ -22,8 +24,8 @@ const Analytics: React.FC = () => {
   };
 
   const displayData = useMemo(() => {
-    return selectedCategory === 'All' 
-      ? filteredExpenses 
+    return selectedCategory === 'All'
+      ? filteredExpenses
       : filteredExpenses.filter(e => e.category === selectedCategory);
   }, [filteredExpenses, selectedCategory]);
 
@@ -48,6 +50,40 @@ const Analytics: React.FC = () => {
   const totalSpend = displayData.reduce((sum, e) => sum + Number(e.amount), 0);
   const highestCat = breakdown.length > 0 ? breakdown[0] : { name: 'N/A', amount: 0 };
 
+
+
+
+  // Total Expenses Calculation
+  const totalAmount = useMemo(() => {
+    return expenses.reduce((acc, curr) => acc + curr.amount, 0);
+  }, [expenses]);
+
+
+
+
+  // Highest Category logic
+  const highestCategory = useMemo(() => {
+    if (expenses.length === 0) return "N/A";
+    const cats = expenses.reduce((acc, curr) => {
+      acc[curr.category] = (acc[curr.category] || 0) + curr.amount;
+      return acc;
+    }, {} as Record<string, number>);
+    return Object.keys(cats).reduce((a, b) => cats[a] > cats[b] ? a : b);
+  }, [expenses]);
+
+  // Average Daily Spend Calculation
+  const avgDailySpend = useMemo(() => {
+    if (expenses.length === 0) return 0;
+    const days = new Set(expenses.map(e => new Date(e.date).toDateString())).size;
+    return days > 0 ? totalAmount / days : totalAmount;
+  }, [expenses, totalAmount]);
+
+  // Budget Status (example: if you have a fixed budget of $2000)
+  const budget = 2000;
+  const budgetStatus = useMemo(() => {
+    return ((totalAmount / budget) * 100).toFixed(1) + '%';
+  }, [totalAmount]);
+
   return (
     <div className="max-w-7xl mx-auto py-6 px-4 space-y-8 bg-[#fdfcfb] min-h-screen">
       <header>
@@ -57,7 +93,7 @@ const Analytics: React.FC = () => {
 
       {/* --- FILTERS --- */}
       <div className="flex flex-wrap gap-4">
-        <select 
+        <select
           value={selectedMonth}
           onChange={(e) => setSelectedMonth(Number(e.target.value))}
           className="bg-white border border-gray-100 shadow-sm rounded-lg px-4 py-2 text-sm font-medium text-slate-700 outline-none min-w-[150px]"
@@ -67,7 +103,7 @@ const Analytics: React.FC = () => {
           ))}
         </select>
 
-        <select 
+        <select
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
           className="bg-white border border-gray-100 shadow-sm rounded-lg px-4 py-2 text-sm font-medium text-slate-700 outline-none min-w-[150px]"
@@ -116,46 +152,20 @@ const Analytics: React.FC = () => {
 
       {/* --- CHARTS SECTION --- */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Trend Chart */}
-        <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
-          <h4 className="text-sm font-bold text-slate-800 mb-10">6-Month Spending Trend</h4>
-          <div className="relative h-48 flex items-end justify-between px-2 border-l border-b border-gray-100">
-             {/* Simple visual trend line logic */}
-             <svg className="absolute inset-0 w-full h-full">
-                <path 
-                  d="M 0 180 Q 150 170 300 150 T 600 20" 
-                  fill="none" stroke="#3b82f6" strokeWidth="3" 
-                />
-             </svg>
-             {['Sep','Oct','Nov','Dec','Jan','Feb'].map(m => (
-               <span key={m} className="text-[10px] font-bold text-slate-400 uppercase mt-4">{m}</span>
-             ))}
-          </div>
+        {/* Trend Chart (Image Match) */}
+        <div className="bg-white p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm">
+          <h4 className="text-sm font-bold text-slate-800 mb-6">6-Month Spending Trend</h4>
+          <TrendLineChart />
         </div>
 
-        {/* Category Distribution (Circle Graph) */}
-        <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center">
-          <h4 className="text-sm font-bold text-slate-800 self-start mb-10">Category Distribution</h4>
-          <div className="relative w-48 h-48 rounded-full border-[20px] border-slate-50 flex items-center justify-center">
-              {/* This is a CSS representation of the donut chart */}
-              <div className="absolute inset-[-20px] rounded-full border-[20px] border-emerald-400 border-t-red-400 border-r-indigo-400 rotate-45"></div>
-              <div className="text-center">
-                <span className="block text-xl font-black text-slate-800">${totalSpend.toFixed(0)}</span>
-                <span className="text-[10px] text-slate-400 font-bold uppercase">Total</span>
-              </div>
-          </div>
-          <div className="flex flex-wrap justify-center gap-3 mt-8">
-             {breakdown.slice(0, 4).map(c => (
-               <div key={c.name} className="flex items-center gap-1.5">
-                 <div className={`w-2 h-2 rounded-full ${c.color}`}></div>
-                 <span className="text-[10px] font-bold text-slate-500">{c.name}</span>
-               </div>
-             ))}
-          </div>
+        {/* Category Distribution (Image Match) */}
+        <div className="bg-white p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm">
+          <h4 className="text-sm font-bold text-slate-800 mb-2">Category Distribution</h4>
+          <CategoryPieChart />
         </div>
       </div>
 
-      {/* --- CATEGORY BREAKDOWN LIST (Image 5/7 Fix) --- */}
+      {/* --- CATEGORY BREAKDOWN LIST  --- */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
         <div className="p-6 border-b border-gray-50 bg-gray-50/30">
           <h4 className="text-sm font-bold text-slate-800">Category Breakdown</h4>
@@ -171,8 +181,8 @@ const Analytics: React.FC = () => {
                 <span className="text-sm font-black text-slate-800">${cat.amount.toFixed(2)}</span>
               </div>
               <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
-                <div 
-                  className={`h-full ${cat.color} rounded-full transition-all duration-1000`} 
+                <div
+                  className={`h-full ${cat.color} rounded-full transition-all duration-1000`}
                   style={{ width: `${cat.percentage}%` }}
                 ></div>
               </div>

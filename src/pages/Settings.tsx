@@ -1,7 +1,46 @@
 import React from 'react';
 import { Download, Trash2 } from 'lucide-react';
+import { useExpenses } from '@/hooks/useExpenses';
 
  const Settings: React.FC = () => {
+  const { expenses } = useExpenses();
+
+  const downloadCSV = () => {
+    if (expenses.length === 0) {
+      alert("Koi data nahi hai download karne ke liye!");
+      return;
+    }
+
+    // 1. CSV Headers define karein
+    const headers = ["Title", "Amount", "Category", "Date"];
+    
+    // 2. Data rows ko map karein
+    const rows = expenses.map(exp => [
+      exp.title,
+      exp.amount,
+      exp.category,
+      exp.date
+    ]);
+
+    // 3. Headers aur Rows ko join karke string banayein
+    const csvContent = [
+      headers.join(","), 
+      ...rows.map(row => row.join(","))
+    ].join("\n");
+
+    // 4. Blob (Binary Large Object) banayein
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+
+    // 5. Temporary link banakar click trigger karein
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `Expense_Report_${new Date().toLocaleDateString()}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
   return (
     <div className="max-w-4xl mx-auto py-6 px-4 space-y-6">
       {/* Header */}
@@ -100,7 +139,7 @@ import { Download, Trash2 } from 'lucide-react';
               <h4 className="text-sm font-bold text-slate-800">Export Data</h4>
               <p className="text-[11px] text-slate-400 font-medium">Download all your expenses as CSV</p>
             </div>
-            <button className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg text-xs font-bold text-slate-600 hover:bg-gray-50 transition-all">
+            <button onClick={downloadCSV} className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg text-xs font-bold text-slate-600 hover:bg-gray-50 transition-all">
               <Download size={14} /> Export
             </button>
           </div>
