@@ -1,7 +1,7 @@
 // src/pages/Dashboard.tsx
 import { useMemo } from "react";
 import { useExpenses } from "../hooks/useExpenses";
-import { WeeklyBarChart } from "@/components/WeeklyBarChart";
+import { WeeklyBarChart } from '../components/WeeklyBarChart.tsx';
 import { CategoryPieChart } from "@/components/CategoryPieChart";
 
 export const Dashboard = () => {
